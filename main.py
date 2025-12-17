@@ -26,7 +26,7 @@ from model import DCENet, load_model
 # ============================================================================
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', 'best_model.pth')
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "best_model.pth")
 PROCESS_SIZE = 512  # Must be multiple of 32 for Zero-DCE architecture
 
 # Logging setup
