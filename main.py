@@ -221,6 +221,10 @@ def enhance_image(image_bgr: np.ndarray) -> np.ndarray:
 # REST ENDPOINTS
 # ============================================================================
 
+@app.get("/")
+def root():
+    return {"status": "ok"}
+
 @app.get("/health")
 async def health_check():
     """
