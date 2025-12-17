@@ -1,0 +1,19 @@
+# Zero-DCE Backend Dependencies
+
+# Core ML Framework
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Web Framework & Async
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+websockets>=12.0
+
+# Image Processing
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Additional utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+aiofiles>=23.0.0
