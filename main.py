@@ -59,7 +59,7 @@ async def lifespan(app: FastAPI):
     
     # Load model
     try:
-        model = load_model(MODEL_PATH, device=DEVICE)
+        model = load_model(MODEL_PATH, device=DEVICE).half()
         logger.info(f"✓ Model loaded successfully on {DEVICE}")
     except Exception as e:
         logger.error(f"❌ Failed to load model: {str(e)}")
@@ -192,10 +192,10 @@ def enhance_image(image_bgr: np.ndarray) -> np.ndarray:
         image_tensor = image_tensor.permute(2, 0, 1).unsqueeze(0)
         
         # Move to device
-        image_tensor = image_tensor.to(DEVICE)
+        image_tensor = image_tensor.to(DEVICE, dtype=torch.half, non_blocking=True)
         
-        # Inference (no gradients needed)
-        with torch.no_grad():
+        # Inference
+        with torch.inference_mode():
             enhanced_tensor = model(image_tensor)
         
         # Post-process: convert back to numpy
