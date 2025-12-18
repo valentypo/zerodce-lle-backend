@@ -306,15 +306,27 @@ async def websocket_enhance(websocket: WebSocket):
     """
     await manager.connect(websocket)
     
+    # --- FPS CONFIGURATION ---
+    TARGET_FPS = 15  # Change this to 10, 20, or 24 as needed
+    FRAME_INTERVAL = 1.0 / TARGET_FPS
+    last_processed_time = time.time()
+    
     try:
         frame_count = 0
         while True:
             # Receive message from client
             data = await websocket.receive_json()
+            current_time = time.time()
+            
+            if (current_time - last_processed_time) < FRAME_INTERVAL:
+                # SKIP this frame to maintain FPS limit
+                continue
             
             if data.get("type") != "frame":
                 continue
             
+            # If we reached here, we are processing the frame
+            last_processed_time = current_time
             frame_count += 1
             
             try:
