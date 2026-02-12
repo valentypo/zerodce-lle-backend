@@ -318,6 +318,11 @@ async def websocket_enhance(websocket: WebSocket):
         while True:
             data = await websocket.receive_json()
             
+            # Handle ping/pong for keepalive
+            if data.get("type") == "ping":
+                await websocket.send_json({"type": "pong"})
+                continue
+            
             if data.get("type") != "frame":
                 continue
             
@@ -369,14 +374,19 @@ async def websocket_enhance(websocket: WebSocket):
                     "message": str(e)
                 })
     
-    except WebSocketDisconnect:
+    except WebSocketDisconnect as e:
         manager.disconnect(websocket)
         avg_fps = frame_count / (total_time / 1000) if total_time > 0 else 0
         logger.info(f"📊 Session ended | {frame_count} frames | Avg FPS: {avg_fps:.1f}")
+        logger.info(f"Disconnect reason: {e.code if hasattr(e, 'code') else 'Unknown'}")
     
     except Exception as e:
-        logger.error(f"❌ WebSocket error: {str(e)}")
+        logger.error(f"❌ WebSocket error: {str(e)}", exc_info=True)
         manager.disconnect(websocket)
+        try:
+            await websocket.close(code=1011, reason=str(e))
+        except:
+            pass
 
 
 # ============================================================================
